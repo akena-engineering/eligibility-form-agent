@@ -1,0 +1,15 @@
+{
+  // `nest build` uses this file. tsconfig.json is for type checking only (noEmit).
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    // Source imports end in .ts; the emitted files import .js.
+    "rewriteRelativeImportExtensions": true,
+    "sourceMap": true
+  },
+  "include": ["src"]
+}

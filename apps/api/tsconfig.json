@@ -1,0 +1,11 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    // NestJS needs decorators with type metadata. Not erasable: this package is compiled by tsc.
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "erasableSyntaxOnly": false,
+    "types": ["node", "multer"]
+  },
+  "include": ["src", "test"]
+}
