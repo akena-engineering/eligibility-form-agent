@@ -1,0 +1,21 @@
+{
+  "name": "@efa/form-agent",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc -p ."
+  },
+  "dependencies": {
+    "@cantoo/pdf-lib": "2.11.1",
+    "@efa/shared": "workspace:*",
+    "@langchain/anthropic": "1.5.13",
+    "@langchain/core": "1.2.20",
+    "@langchain/langgraph": "1.5.1",
+    "unpdf": "1.9.1",
+    "zod": "4.6.7"
+  }
+}
