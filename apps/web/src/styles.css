@@ -1,0 +1,25 @@
+/* Numbers line up in tables, counters and confidence badges. */
+body {
+  font-variant-numeric: tabular-nums;
+}
+
+/* The running step pulses. Nothing else on the screen moves. */
+@keyframes step-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgb(59 130 246 / 0.35);
+  }
+  50% {
+    box-shadow: 0 0 0 4px rgb(59 130 246 / 0);
+  }
+}
+
+.step-running {
+  animation: step-pulse 1.4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .step-running {
+    animation: none;
+  }
+}
