@@ -1,0 +1,14 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "printWidth": 80,
+  "singleQuote": false,
+  "semi": true,
+  "trailingComma": "all",
+  "jsdoc": {
+    "lineWrappingStyle": "greedy",
+    "commentLineStrategy": "keep",
+    "capitalizeDescriptions": true,
+    "descriptionWithDot": true
+  },
+  "ignorePatterns": ["fixtures/**/*.pdf", "pnpm-lock.yaml"]
+}
