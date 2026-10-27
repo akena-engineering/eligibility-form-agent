@@ -1,6 +1,7 @@
 # Sources
 
-The form the agent fills, `forms/arkansas-wioa-2.4.pdf`, is a real public form, unchanged:
+The form the agent fills, `forms/arkansas-wioa-2.4.pdf`, is the first two pages of a real public
+form (general eligibility and Category A, individual layoff), otherwise unchanged:
 https://dws.arkansas.gov/wp-content/uploads/FORM_2.4_-_Dislocated_Worker_Eligibility_Determination_6-24-21_-1.pdf
 
 The case documents in `cases/` are real public forms filled with synthetic data:
