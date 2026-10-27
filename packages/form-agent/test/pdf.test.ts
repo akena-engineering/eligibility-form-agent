@@ -25,10 +25,10 @@ describe("forms without fillable fields (Arkansas WIOA 2.4)", () => {
     expect(await readAcroFormFields(form)).toEqual([]);
   });
 
-  it("turns a box in page fractions into PDF points", () => {
-    const box = { x: 0.25, y: 0.5, width: 0.5, height: 0.125 };
+  it("turns a box in pixels of the rendered page into PDF points", () => {
+    const box = { left: 300, top: 800, right: 900, bottom: 1000 };
 
-    expect(toPlacement(box, 2, { width: 600, height: 800 })).toEqual({
+    expect(toPlacement(box, 2, 800)).toEqual({
       page: 2,
       x: 150,
       y: 300,

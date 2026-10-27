@@ -75,9 +75,9 @@ form sit at the end of the PDF stream, so stream order would separate them from 
 fillable PDFs are flattened first (`flattenFilledForm`), since text extraction ignores field values.
 Documents must have a text layer: scans are not read (a demo, not an OCR pipeline).
 
-Form fields: AcroForm PDFs are read and filled as forms. Any other form (flat like the Arkansas form, or
-scanned) goes to the `form` model one page at a time, as a PDF; it returns every field with its box as
-fractions of the page, and `pdf/fill.ts` draws the value into that box. No layout heuristics.
+Form fields: AcroForm PDFs are read and filled as forms. Any other form (flat like the Arkansas form)
+goes to the `form` model one page at a time, rendered as a PNG (`pdf/render.ts`); it returns every
+field with its box in pixels, and `pdf/fill.ts` draws the value into that box. No layout heuristics.
 
 ## Versions
 

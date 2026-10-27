@@ -2,21 +2,19 @@ import type { FieldCandidate, Placement } from "@efa/shared";
 import type { LangGraphRunnableConfig } from "@langchain/langgraph";
 import { z } from "zod";
 import type { AgentDeps } from "../deps.ts";
-import { callStructured, pdfBlock } from "../llm.ts";
-import { extractPage, loadPdf, readAcroFormFields } from "../pdf/acroform.ts";
+import { callStructured, pngBlock } from "../llm.ts";
+import { loadPdf, readAcroFormFields } from "../pdf/acroform.ts";
+import { RENDER_SCALE, renderPage } from "../pdf/render.ts";
 import { readTextLayer } from "../pdf/text-layer.ts";
 import { FORM_VISION_SYSTEM } from "../prompts.ts";
 import type { Update } from "../state.ts";
 
-/**
- * A rectangle as fractions of the page width and height (0 to 1), origin
- * top-left.
- */
+/** A rectangle in pixels of the rendered page, origin top-left. */
 const PageBox = z.object({
-  x: z.number(),
-  y: z.number(),
-  width: z.number(),
-  height: z.number(),
+  left: z.number(),
+  top: z.number(),
+  right: z.number(),
+  bottom: z.number(),
 });
 type PageBox = z.infer<typeof PageBox>;
 
@@ -58,7 +56,9 @@ export function parseForm(deps: AgentDeps) {
 }
 
 /**
- * One call per page: every blank and box, with the rectangle a value goes into.
+ * One call per page, as an image: every blank and box, with the rectangle a
+ * value goes into. Pixel boxes on an image are far more precise than fractions
+ * of a PDF page.
  */
 async function findFields(
   deps: AgentDeps,
@@ -67,7 +67,7 @@ async function findFields(
 ): Promise<FieldCandidate[]> {
   const sizes = (await loadPdf(bytes)).getPages().map((page) => page.getSize());
   const found = await Promise.all(
-    sizes.map((_, i) => readPage(deps, bytes, i + 1, config)),
+    sizes.map((size, i) => readPage(deps, bytes, i + 1, size, config)),
   );
 
   const ids = new IdAllocator();
@@ -78,7 +78,7 @@ async function findFields(
       type: field.type,
       rawLabel: field.label,
       page: i + 1,
-      placement: toPlacement(field.box, i + 1, sizes[i]!),
+      placement: toPlacement(field.box, i + 1, sizes[i]!.height),
     })),
   );
 }
@@ -87,9 +87,12 @@ async function readPage(
   deps: AgentDeps,
   bytes: Uint8Array,
   page: number,
+  size: { width: number; height: number },
   config: LangGraphRunnableConfig,
 ): Promise<PageField[]> {
-  const single = await extractPage(bytes, page);
+  const png = await renderPage(bytes, page);
+  const width = Math.round(size.width * RENDER_SCALE);
+  const height = Math.round(size.height * RENDER_SCALE);
 
   const { fields } = await callStructured(
     deps.models,
@@ -99,8 +102,11 @@ async function readPage(
       schema: PageFields,
       system: FORM_VISION_SYSTEM,
       user: [
-        pdfBlock(single),
-        { type: "text", text: `Page ${page}. List its fields.` },
+        pngBlock(png),
+        {
+          type: "text",
+          text: `Page ${page}, ${width} x ${height} pixels. List its fields.`,
+        },
       ],
     },
     config,
@@ -110,19 +116,20 @@ async function readPage(
 }
 
 /**
- * A box in page fractions (origin top-left) to PDF points (origin bottom-left).
+ * A box in pixels of the rendered page (origin top-left) to PDF points (origin
+ * bottom-left).
  */
 export function toPlacement(
   box: PageBox,
   page: number,
-  size: { width: number; height: number },
+  pageHeight: number,
 ): Placement {
   return {
     page,
-    x: box.x * size.width,
-    y: (1 - box.y - box.height) * size.height,
-    width: box.width * size.width,
-    height: box.height * size.height,
+    x: box.left / RENDER_SCALE,
+    y: pageHeight - box.bottom / RENDER_SCALE,
+    width: (box.right - box.left) / RENDER_SCALE,
+    height: (box.bottom - box.top) / RENDER_SCALE,
   };
 }
 

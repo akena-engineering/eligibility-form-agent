@@ -291,6 +291,9 @@ importers:
       '@langchain/langgraph':
         specifier: 1.5.1
         version: 1.5.1(@langchain/core@1.2.20)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(zod@4.6.7)
+      '@napi-rs/canvas':
+        specifier: 1.0.10
+        version: 1.0.10
       unpdf:
         specifier: 1.9.1
         version: 1.9.1(@napi-rs/canvas@1.0.10)
@@ -4172,7 +4175,6 @@ snapshots:
       '@napi-rs/canvas-linux-x64-musl': 1.0.10
       '@napi-rs/canvas-win32-arm64-msvc': 1.0.10
       '@napi-rs/canvas-win32-x64-msvc': 1.0.10
-    optional: true
 
   '@napi-rs/nice-android-arm-eabi@1.1.1':
     optional: true

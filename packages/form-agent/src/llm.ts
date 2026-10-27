@@ -19,20 +19,16 @@ export interface StructuredCall<T extends z.ZodType> {
    */
   context?: string;
   /**
-   * The request, as text or content blocks (e.g. a PDF for the vision
-   * fallbacks).
+   * The request, as text or content blocks (e.g. a form page as an image).
    */
   user: MessageContent;
 }
 
-/**
- * A PDF as a standard content block, for reading form pages and scanned pages.
- */
-
-export function pdfBlock(bytes: Uint8Array) {
+/** A PNG as a standard content block, for reading form pages. */
+export function pngBlock(bytes: Uint8Array) {
   return {
-    type: "file" as const,
-    mimeType: "application/pdf",
+    type: "image" as const,
+    mimeType: "image/png",
     data: Buffer.from(bytes).toString("base64"),
   };
 }

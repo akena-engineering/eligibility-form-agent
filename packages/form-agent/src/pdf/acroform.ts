@@ -88,20 +88,3 @@ export async function flattenFilledForm(
     return bytes;
   }
 }
-
-/**
- * Copies one page into its own PDF, for sending a single scanned page to a
- * vision model.
- */
-export async function extractPage(
-  bytes: Uint8Array,
-  pageNumber: number,
-): Promise<Uint8Array> {
-  const source = await loadPdf(bytes);
-  const out = await PDFDocument.create();
-
-  const [page] = await out.copyPages(source, [pageNumber - 1]);
-  out.addPage(page!);
-
-  return out.save();
-}
