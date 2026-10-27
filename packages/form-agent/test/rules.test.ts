@@ -257,11 +257,10 @@ describe("deterministic verification", () => {
       id: "d1",
       filename: "intake.pdf",
       pages: [
-        { n: 1, text: "Intake note", source: "text" },
+        { n: 1, text: "Intake note" },
         {
           n: 2,
           text: "She says her last day worked was September 26, 2026.",
-          source: "text",
         },
       ],
     },
@@ -272,7 +271,6 @@ describe("deterministic verification", () => {
         {
           n: 1,
           text: "Your last day of employment will be September 30, 2026.",
-          source: "text",
         },
       ],
     },

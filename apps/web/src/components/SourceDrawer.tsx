@@ -34,7 +34,6 @@ export function SourceDrawer({ evidence, documents, onClose }: Props) {
                 </Drawer.Title>
                 <Text fontSize="xs" color="gray.500">
                   Page {evidence?.page}
-                  {page?.source === "ocr" ? " · transcribed from a scan" : ""}
                 </Text>
               </Box>
             </Drawer.Header>

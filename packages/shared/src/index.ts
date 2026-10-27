@@ -59,7 +59,6 @@ export type FieldDefinition = z.infer<typeof FieldDefinition>;
 export const DocumentPage = z.object({
   n: z.number().int().min(1),
   text: z.string(),
-  source: z.enum(["text", "ocr"]),
 });
 export type DocumentPage = z.infer<typeof DocumentPage>;
 

@@ -1,7 +1,7 @@
 import { ChatAnthropic } from "@langchain/anthropic";
 import type { BaseChatModel } from "@langchain/core/language_models/chat_models";
 
-export type ModelRole = "form" | "ocr" | "plan" | "extract" | "verify";
+export type ModelRole = "form" | "plan" | "extract" | "verify";
 
 /** The chat model for each role. */
 export interface Models {
@@ -17,7 +17,6 @@ const HAIKU = "claude-haiku-5-5";
  */
 const ROLES: Record<ModelRole, { model: string; maxTokens: number }> = {
   form: { model: SONNET, maxTokens: 16_000 },
-  ocr: { model: HAIKU, maxTokens: 8_000 },
   plan: { model: SONNET, maxTokens: 16_000 },
   extract: { model: SONNET, maxTokens: 16_000 },
   verify: { model: HAIKU, maxTokens: 4_000 },

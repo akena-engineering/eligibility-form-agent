@@ -73,7 +73,7 @@ the decorator settings from tsconfig.
 Case documents are read in layout order (`readTextLayer(bytes)`): values written onto a flat
 form sit at the end of the PDF stream, so stream order would separate them from their labels. Filled
 fillable PDFs are flattened first (`flattenFilledForm`), since text extraction ignores field values.
-Scanned pages (no text layer) go to the OCR model.
+Documents must have a text layer: scans are not read (a demo, not an OCR pipeline).
 
 Form fields: AcroForm PDFs are read and filled as forms. Any other form (flat like the Arkansas form, or
 scanned) goes to the `form` model one page at a time, as a PDF; it returns every field with its box as
