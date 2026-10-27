@@ -134,10 +134,6 @@ export function UploadPanel({ busy, onStart }: Props) {
         >
           Load a sample case
         </Button>
-        <Text fontSize="xs" color="gray.500">
-          Example: a public intake form and a synthetic person's documents. No
-          real personal data.
-        </Text>
         <Button type="submit" colorPalette="blue" size="sm" disabled={busy}>
           Start
         </Button>
