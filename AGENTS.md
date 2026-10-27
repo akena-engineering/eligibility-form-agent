@@ -54,7 +54,7 @@ Data fetching with TanStack Query, forms with React Hook Form + zod. No router: 
 | `packages/shared`     | zod schemas + types shared by everything                                             |
 | `packages/form-agent` | LangGraph graph, nodes, rules, PDF utils. No HTTP                                    |
 | `apps/api`            | NestJS 12: upload, SSE events, review, PDF. In-memory `RunStore`                     |
-| `apps/web`            | Vite + React 19 + Chakra v3: upload, steps graph, review cards, PDF view             |
+| `apps/web`            | Vite + React 19 + Chakra v3: upload, steps graph, review cards, PDF download         |
 | `packages/evals`      | Phase 5                                                                              |
 | `fixtures/`           | The sample form (`forms/`) and synthetic case documents (`cases/`), see `SOURCES.md` |
 

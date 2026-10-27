@@ -39,7 +39,24 @@ export async function submitReview(
 }
 
 export const eventsUrl = (runId: string) => `/api/runs/${runId}/events`;
-export const pdfUrl = (runId: string) => `/api/runs/${runId}/pdf`;
+
+/**
+ * Saves the filled PDF through the browser's download. Fetched first, so an API
+ * error shows its message instead of being saved as the file.
+ */
+export async function downloadPdf(runId: string): Promise<void> {
+  const response = await fetch(`/api/runs/${runId}/pdf`);
+  if (!response.ok) throw await requestError(response);
+
+  const url = URL.createObjectURL(await response.blob());
+
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "filled-form.pdf";
+  link.click();
+
+  URL.revokeObjectURL(url);
+}
 
 export async function parse<T extends z.ZodType>(
   response: Response,

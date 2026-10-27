@@ -1,7 +1,9 @@
-import { Box, Button, Flex, Text } from "@chakra-ui/react";
-import { pdfUrl } from "../api.ts";
+import { Button, Center, Stack, Text } from "@chakra-ui/react";
+import { useMutation } from "@tanstack/react-query";
+import { useEffect, useRef } from "react";
+import { downloadPdf } from "../api.ts";
 
-/** The filled PDF, as it will be printed or filed. */
+/** The run is done: the filled PDF downloads once, and can be saved again. */
 export function ResultPanel({
   runId,
   onNewCase,
@@ -9,44 +11,48 @@ export function ResultPanel({
   runId: string;
   onNewCase: () => void;
 }) {
-  const url = pdfUrl(runId);
+  const download = useMutation({ mutationFn: () => downloadPdf(runId) });
+
+  // Once per run, also under StrictMode's double effects.
+  const downloaded = useRef(false);
+
+  useEffect(() => {
+    if (downloaded.current) return;
+
+    downloaded.current = true;
+    download.mutate();
+  }, [download]);
 
   return (
-    <Flex direction="column" h="full">
-      <Flex
-        px="4"
-        py="2.5"
-        gap="2"
-        align="center"
-        bg="white"
-        borderBottomWidth="1px"
-      >
-        <Text fontSize="sm" fontWeight="medium">
-          Filled form
-        </Text>
-        <Text fontSize="xs" color="gray.500">
-          Only accepted and edited values are written. Staff-only fields stay
-          blank unless entered.
-        </Text>
-        <Flex gap="2" ml="auto">
-          <Button asChild size="sm" colorPalette="blue">
-            <a href={url} download="filled-form.pdf">
-              Download PDF
-            </a>
+    <Center h="full">
+      <Stack align="center" gap="3" maxW="md" textAlign="center">
+        <Text fontWeight="medium">Form filled</Text>
+
+        {download.isError ? (
+          <Text fontSize="sm" color="red.600">
+            The PDF could not be downloaded: {download.error.message}
+          </Text>
+        ) : (
+          <Text fontSize="sm" color="gray.600">
+            Downloaded as filled-form.pdf. Only accepted and edited values are
+            written; staff-only fields stay blank unless entered.
+          </Text>
+        )}
+
+        <Stack direction="row" gap="2">
+          <Button
+            size="sm"
+            colorPalette="blue"
+            loading={download.isPending}
+            onClick={() => download.mutate()}
+          >
+            Download again
           </Button>
           <Button size="sm" variant="outline" onClick={onNewCase}>
             New case
           </Button>
-        </Flex>
-      </Flex>
-      <Box
-        as="iframe"
-        flex="1"
-        w="full"
-        border="0"
-        bg="gray.100"
-        {...{ src: url, title: "Filled form" }}
-      />
-    </Flex>
+        </Stack>
+      </Stack>
+    </Center>
   );
 }
