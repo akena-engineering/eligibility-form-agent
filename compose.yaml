@@ -1,0 +1,26 @@
+# `docker compose up`: API on :3000, web on http://localhost:5173, both reload on
+# save. The source is mounted; dependencies are installed in the container
+# (Linux builds of native packages), not taken from the host.
+services:
+  dev:
+    image: node:24-slim
+    working_dir: /app
+    command: sh -c "corepack enable && pnpm install && pnpm dev"
+    environment:
+      CI: "true"
+      COREPACK_ENABLE_DOWNLOAD_PROMPT: "0"
+      npm_config_store_dir: /pnpm-store
+      WEB_HOST: 0.0.0.0
+    ports: ["3000:3000", "5173:5173"]
+    volumes:
+      - .:/app
+      - pnpm-store:/pnpm-store
+      - /app/node_modules
+      - /app/apps/api/node_modules
+      - /app/apps/web/node_modules
+      - /app/packages/demo/node_modules
+      - /app/packages/form-agent/node_modules
+      - /app/packages/shared/node_modules
+
+volumes:
+  pnpm-store:
