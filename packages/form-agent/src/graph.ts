@@ -6,7 +6,6 @@ import {
   Send,
   StateGraph,
   isGraphInterrupt,
-  type BaseCheckpointSaver,
   type LangGraphRunnableConfig,
 } from "@langchain/langgraph";
 import { emit, type AgentDeps } from "./deps.ts";
@@ -81,10 +80,7 @@ function withEvents<I, O>(node: string, fn: NodeFn<I, O>): NodeFn<I, O> {
  * Builds the graph for one run. Input files and models are closed over, so
  * binary data never enters graph state or checkpoints.
  */
-export function buildGraph(
-  deps: AgentDeps,
-  checkpointer: BaseCheckpointSaver = new MemorySaver(),
-) {
+export function buildGraph(deps: AgentDeps) {
   const extract = withEvents("extractField", extractField(deps));
   const verify = withEvents("verifyField", verifyField(deps));
 
@@ -196,19 +192,20 @@ export function buildGraph(
       "fillPdf",
     ])
     .addEdge("fillPdf", END)
-    .compile({ checkpointer });
+    .compile({ checkpointer: new MemorySaver() });
 }
 
 export type FormAgentGraph = ReturnType<typeof buildGraph>;
 
 /**
  * Per-run config. `maxConcurrency` caps parallel branches, and so parallel
- * model calls.
+ * model calls. Keep it at 2 or more: LangGraph 1.5 stops after the first
+ * parallel task with 1.
  */
-export function runConfig(threadId: string, maxConcurrency = 4) {
+export function runConfig(threadId: string) {
   return {
     configurable: { thread_id: threadId },
-    maxConcurrency,
+    maxConcurrency: 4,
     recursionLimit: 100,
   };
 }

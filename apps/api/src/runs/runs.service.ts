@@ -5,47 +5,27 @@ import {
   Injectable,
   Logger,
 } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
 import type { AgentEvent, ReviewDecision } from "@efa/shared";
-import {
-  buildGraph,
-  type InputFile,
-  type Models,
-  type ReviewRequest,
-} from "@efa/form-agent";
+import type { InputFile, Models, ReviewRequest } from "@efa/form-agent";
 import { Command } from "@langchain/langgraph";
 import { MODELS } from "./models.provider.ts";
 import { Run } from "./run.ts";
 import { RunStore } from "./run-store.ts";
-
-/**
- * Parallel branches per run, so also parallel model calls. `MAX_CONCURRENCY`
- * overrides it.
- */
-const DEFAULT_MAX_CONCURRENCY = 4;
 
 @Injectable()
 export class RunsService {
   private readonly logger = new Logger(RunsService.name);
   private readonly store: RunStore;
   private readonly models: Models;
-  private readonly maxConcurrency: number;
 
-  constructor(
-    store: RunStore,
-    @Inject(MODELS) models: Models,
-    config: ConfigService,
-  ) {
+  constructor(store: RunStore, @Inject(MODELS) models: Models) {
     this.store = store;
     this.models = models;
-    this.maxConcurrency =
-      Number(config.get("MAX_CONCURRENCY")) || DEFAULT_MAX_CONCURRENCY;
   }
 
   /** Builds the graph for this run and starts it in the background. */
   start(form: InputFile, documents: InputFile[]): Run {
-    const graph = buildGraph({ form, documents, models: this.models });
-    const run = new Run(graph, this.maxConcurrency);
+    const run = new Run({ form, documents, models: this.models });
 
     this.store.add(run);
     void this.drive(run, {});
@@ -68,8 +48,10 @@ export class RunsService {
     const unknown = decisions
       .filter((d) => !run.fieldIds.has(d.fieldId))
       .map((d) => d.fieldId);
-    if (unknown.length > 0)
+
+    if (unknown.length > 0) {
       throw new BadRequestException(`Unknown fields: ${unknown.join(", ")}`);
+    }
 
     run.status = "running";
     void this.drive(run, new Command({ resume: decisions }));
@@ -87,12 +69,11 @@ export class RunsService {
     try {
       const stream = await run.graph.stream(input as never, {
         ...run.config,
-        streamMode: ["custom"],
-        subgraphs: true,
+        streamMode: "custom",
       });
 
       for await (const chunk of stream) {
-        const [, , event] = chunk as unknown as [string[], string, AgentEvent];
+        const event = chunk as AgentEvent;
         if (event.type === "error") reported.add(event.message);
 
         run.emit(event);
@@ -132,10 +113,8 @@ export class RunsService {
       return;
     }
 
-    const filledPdf = state.values.filledPdf as string | null;
-    if (!filledPdf) throw new Error("The run ended without a PDF");
+    if (!run.pdf) throw new Error("The run ended without a PDF");
 
-    run.pdf = Buffer.from(filledPdf, "base64");
     run.status = "finished";
     run.emit({ type: "pdf_ready" });
   }

@@ -28,9 +28,9 @@ export function fillPdf(deps: AgentDeps) {
       return entry ? [entry] : [];
     });
 
-    const bytes = await writePdf(deps.form.bytes, entries);
+    deps.onPdf(await writePdf(deps.form.bytes, entries));
 
-    return { filledPdf: Buffer.from(bytes).toString("base64") };
+    return {};
   };
 }
 

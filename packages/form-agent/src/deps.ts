@@ -9,12 +9,13 @@ export interface InputFile {
 
 /**
  * What one run's graph is built with. Files stay out of graph state and
- * checkpoints.
+ * checkpoints, the filled PDF too: it goes to `onPdf`.
  */
 export interface AgentDeps {
   form: InputFile;
   documents: InputFile[];
   models: Models;
+  onPdf: (bytes: Uint8Array) => void;
 }
 
 /** Sends a UI event through the "custom" stream. */

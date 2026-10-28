@@ -1,12 +1,17 @@
 import { randomUUID } from "node:crypto";
 import { RunEvent, type AgentEvent, type RunStatus } from "@efa/shared";
-import { runConfig, type FormAgentGraph } from "@efa/form-agent";
+import {
+  buildGraph,
+  runConfig,
+  type AgentDeps,
+  type FormAgentGraph,
+} from "@efa/form-agent";
 import { ReplaySubject, filter, type Observable } from "rxjs";
 
 /**
  * One agent run: the graph built for it (files and models are closed over), its
- * status, every event so far, and the filled PDF once there is one. Lives in
- * memory only.
+ * status, every event so far, and the filled PDF once the graph hands it over.
+ * Lives in memory only.
  */
 export class Run {
   readonly id = randomUUID();
@@ -26,9 +31,14 @@ export class Run {
   // what it already has.
   private readonly events = new ReplaySubject<RunEvent>();
 
-  constructor(graph: FormAgentGraph, maxConcurrency: number) {
-    this.graph = graph;
-    this.config = runConfig(this.id, maxConcurrency);
+  constructor(deps: Omit<AgentDeps, "onPdf">) {
+    this.graph = buildGraph({
+      ...deps,
+      onPdf: (bytes) => {
+        this.pdf = Buffer.from(bytes);
+      },
+    });
+    this.config = runConfig(this.id);
   }
 
   /**

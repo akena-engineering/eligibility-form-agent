@@ -59,13 +59,6 @@ export const GraphState = Annotation.Root({
 
   // Review loop.
   retries: Annotation<RetryRequest[]>({ reducer: replace, default: () => [] }),
-
-  // Output.
-  /** Base64 of the filled PDF, set by fillPdf. */
-  filledPdf: Annotation<string | null>({
-    reducer: replace,
-    default: () => null,
-  }),
 });
 
 export type State = typeof GraphState.State;
