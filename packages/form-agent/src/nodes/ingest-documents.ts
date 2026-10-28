@@ -24,8 +24,7 @@ async function ingestDocument(
   // Filled fillable PDFs keep their values in form fields, which text
   // extraction does not read.
   const bytes = await flattenFilledForm(file.bytes);
-  const layer = await readTextLayer(bytes);
-  const pages = layer.map(({ n, text }) => ({ n, text }));
+  const pages = await readTextLayer(bytes);
 
   return { id, filename: file.filename, pages };
 }

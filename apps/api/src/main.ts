@@ -1,10 +1,13 @@
 import { Logger } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
-import { AppModule, configureApp } from "./app.module.ts";
+import { AppModule } from "./app.module.ts";
 
 const PORT = Number(process.env.PORT) || 3000;
 
-const app = configureApp(await NestFactory.create(AppModule));
+const app = await NestFactory.create(AppModule);
+app.setGlobalPrefix("api");
+app.enableShutdownHooks();
+
 await app.listen(PORT);
 
 new Logger("Bootstrap").log(`API on http://localhost:${PORT}/api`);

@@ -22,7 +22,6 @@ export function score() {
 export interface ReviewRequest {
   fields: State["fields"];
   proposals: FieldProposal[];
-  decisions: ReviewDecision[];
   completeness: State["completeness"];
   documents: State["documents"];
 }
@@ -37,7 +36,6 @@ export function humanReview() {
     const request: ReviewRequest = {
       fields: state.fields,
       proposals: Object.values(state.proposals),
-      decisions: Object.values(state.decisions),
       completeness: state.completeness,
       documents: state.documents,
     };

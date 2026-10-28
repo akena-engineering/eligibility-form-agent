@@ -1,5 +1,6 @@
 import { getDocumentProxy } from "unpdf";
 
+/** A run of text and its position in PDF user space, origin bottom-left. */
 export interface TextItem {
   str: string;
   x: number;
@@ -10,15 +11,13 @@ export interface TextItem {
 
 export interface TextPage {
   n: number;
-  items: TextItem[];
   text: string;
 }
 
 /**
- * Reads every page's text items with positions (PDF user space, origin
- * bottom-left), and its text in layout order: lines top to bottom, left to
- * right, the way a person reads the page. The PDF's own stream order would
- * separate values written onto a filled-in document from their labels.
+ * Reads every page's text in layout order: lines top to bottom, left to right,
+ * the way a person reads the page. The PDF's own stream order would separate
+ * values written onto a filled-in document from their labels.
  */
 export async function readTextLayer(pdf: Uint8Array): Promise<TextPage[]> {
   // pdf.js rejects Node Buffers and may detach the buffer it is given, so pass
@@ -31,6 +30,7 @@ export async function readTextLayer(pdf: Uint8Array): Promise<TextPage[]> {
     const content = await page.getTextContent();
 
     const items: TextItem[] = [];
+
     for (const item of content.items) {
       if (!("str" in item) || !item.str.trim()) continue;
 
@@ -43,7 +43,7 @@ export async function readTextLayer(pdf: Uint8Array): Promise<TextPage[]> {
       });
     }
 
-    pages.push({ n, items, text: layoutText(items) });
+    pages.push({ n, text: layoutText(items) });
   }
 
   await doc.cleanup();

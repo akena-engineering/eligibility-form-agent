@@ -21,8 +21,8 @@ import { map, type Observable } from "rxjs";
 import { RunStore } from "./run-store.ts";
 import { RunsService } from "./runs.service.ts";
 
-export const MAX_FILE_BYTES = 20 * 1024 * 1024;
-export const MAX_DOCUMENTS = 10;
+const MAX_FILE_BYTES = 20 * 1024 * 1024;
+const MAX_DOCUMENTS = 10;
 
 interface UploadedRunFiles {
   form?: Express.Multer.File[];
@@ -59,10 +59,12 @@ export class RunsController {
     const form = files?.form?.[0];
     const documents = files?.documents ?? [];
 
-    if (!form)
+    if (!form) {
       throw new BadRequestException(
         "A blank form PDF is required (field `form`)",
       );
+    }
+
     if (documents.length === 0) {
       throw new BadRequestException(
         "At least one document is required (field `documents`)",
