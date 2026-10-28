@@ -10,7 +10,7 @@ every field with a source quote and a confidence score; the reviewer accepts, ed
 one; the agent writes the accepted values into the PDF.
 
 **Goal:** a 1-minute screen video: case file in → fields fill with sources → one field honestly
-empty → reviewer accepts → filled PDF out → eval score.
+empty → reviewer accepts → filled PDF out.
 
 ## Rules
 
@@ -39,7 +39,7 @@ empty → reviewer accepts → filled PDF out → eval score.
   capitalized) and linted by the oxlint `jsdoc` plugin. Write usage lines as inline code, or the
   formatter capitalizes them.
 
-## UI rules (apps/web, Phase 3)
+## UI rules (apps/web)
 
 A caseworker tool, not an "AI app". Chakra UI v3 with its default system (no custom theme), `blue` as
 the one accent for primary actions, green/amber/red only for status. Neutral greys, white surfaces,
@@ -55,7 +55,6 @@ Data fetching with TanStack Query, forms with React Hook Form + zod. No router: 
 | `packages/form-agent` | LangGraph graph, nodes, rules, PDF utils. No HTTP                                    |
 | `apps/api`            | NestJS 12: upload, SSE events, review, PDF. In-memory `RunStore`                     |
 | `apps/web`            | Vite + React 19 + Chakra v3: upload, steps graph, review cards, PDF download         |
-| `packages/evals`      | Phase 5                                                                              |
 | `fixtures/`           | The sample form (`forms/`) and synthetic case documents (`cases/`), see `SOURCES.md` |
 
 Graph: `parseForm ∥ ingestDocuments` → `planFields` → `Send` per form section → `fieldPipeline`
@@ -90,6 +89,7 @@ LangGraph JS 1.x, `@cantoo/pdf-lib` (maintained pdf-lib fork), unpdf. Exact vers
 pnpm install
 pnpm dev                               # API (:3000) + web (http://localhost:5173), watch mode (needs a key in .env, see .env.example)
 pnpm test  |  pnpm typecheck  |  pnpm lint  |  pnpm format
+docker compose up                      # the same dev servers in Docker, source mounted
 ```
 
 Tests run without an API key and cover the deterministic parts: rules, PDF reading and filling,

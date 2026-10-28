@@ -14,9 +14,6 @@ coverage/
 .env.*
 !.env.example
 
-# generated
-packages/evals/report.json
-
 # logs
 *.log
 npm-debug.log*
