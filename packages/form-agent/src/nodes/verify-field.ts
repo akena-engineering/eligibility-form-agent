@@ -147,8 +147,9 @@ function locateQuote(
   const doc = documents.find((d) => d.id === e.docId);
 
   const cited = doc?.pages.find((p) => p.n === e.page);
-  if (cited && quoteAppearsIn(e.quote, cited.text))
+  if (cited && quoteAppearsIn(e.quote, cited.text)) {
     return { evidence: e, found: true };
+  }
 
   const other = doc?.pages.find((p) => quoteAppearsIn(e.quote, p.text));
   if (other) return { evidence: { ...e, page: other.n }, found: true };

@@ -76,8 +76,10 @@ export function ReviewPanel(props: Props) {
 
   const acceptAll = () => {
     const next = { ...decisions };
-    for (const fieldId of acceptable)
+
+    for (const fieldId of acceptable) {
       next[fieldId] = { fieldId, action: "accept" };
+    }
 
     props.onDecisionsChange(next);
   };

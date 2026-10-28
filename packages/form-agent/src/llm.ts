@@ -47,6 +47,7 @@ export async function callStructured<T extends z.ZodType>(
   const systemBlocks: Array<Record<string, unknown>> = [
     { type: "text", text: call.system },
   ];
+
   if (call.context) {
     systemBlocks.push({
       type: "text",

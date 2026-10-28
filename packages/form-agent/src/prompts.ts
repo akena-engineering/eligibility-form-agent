@@ -93,6 +93,7 @@ export function extractRequest(
     `Section: ${section}`,
     "Return exactly one proposal per field below.",
   ];
+
   if (Object.keys(notes).length > 0) {
     lines.push(
       "The reviewer rejected an earlier answer for fields with a reviewerNote. " +

@@ -65,8 +65,10 @@ export async function fillPdf(
   }
 
   if (usedAcroForm) doc.getForm().updateFieldAppearances(font);
-  if (leftover.length > 0)
+
+  if (leftover.length > 0) {
     appendSummaryPage(doc, leftover, font, bold, charset);
+  }
 
   return doc.save();
 }
