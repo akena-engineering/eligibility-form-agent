@@ -8,7 +8,7 @@ document.
 It works with any PDF form. The bundled sample is the first two pages of Arkansas' WIOA Dislocated
 Worker Eligibility Determination (Form 2.4), with a synthetic case file for "Anna".
 
-**Demo:** [a 50-second video](docs/demo.mp4) of a sample case, from upload to the filled PDF.
+https://github.com/user-attachments/assets/f501c7a1-4ba9-45e2-beb0-c6ff52c3dc1c
 
 ## How it works
 
