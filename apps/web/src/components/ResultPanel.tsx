@@ -34,8 +34,9 @@ export function ResultPanel({
           </Text>
         ) : (
           <Text fontSize="sm" color="gray.600">
-            Downloaded as filled-form.pdf. Only accepted and edited values are
-            written; staff-only fields stay blank unless entered.
+            {download.isSuccess && "Downloaded as filled-form.pdf. "}
+            Only accepted and edited values are written; staff-only fields stay
+            blank unless entered.
           </Text>
         )}
 
