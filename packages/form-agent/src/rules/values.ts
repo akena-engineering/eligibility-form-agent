@@ -40,8 +40,9 @@ export function parseDate(input: string, dayFirst = false): string | null {
 
   const { y, m, d } = parts;
   const date = new Date(Date.UTC(y, m - 1, d));
-  if (m < 1 || date.getUTCMonth() !== m - 1 || date.getUTCDate() !== d)
-    return null;
+  const real =
+    m >= 1 && date.getUTCMonth() === m - 1 && date.getUTCDate() === d;
+  if (!real) return null;
 
   return `${y}-${String(m).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
 }
@@ -92,10 +93,7 @@ function monthNumber(name: string): number {
  * An ISO date in the form's format. Null for a format with other tokens ("Month
  * D, YYYY").
  */
-export function formatDate(
-  iso: string,
-  format = DEFAULT_FORMAT,
-): string | null {
+function formatDate(iso: string, format = DEFAULT_FORMAT): string | null {
   const [y, m, d] = iso.split("-") as [string, string, string];
   const parts: Record<string, string> = {
     yyyy: y,
@@ -115,14 +113,18 @@ function isDayFirst(format: string): boolean {
 }
 
 /** Canonical form of a value, used to compare what different documents say. */
-export function canonicalValue(
+function canonicalValue(
   value: FieldValue,
-  field: Pick<FieldDefinition, "type">,
+  field: Pick<FieldDefinition, "type" | "format">,
 ): string {
   if (value === null) return "";
   if (typeof value === "boolean") return value ? "true" : "false";
-  if (field.type === "date")
-    return parseDate(value) ?? value.trim().toLowerCase();
+
+  if (field.type === "date") {
+    const dayFirst = isDayFirst(field.format ?? DEFAULT_FORMAT);
+
+    return parseDate(value, dayFirst) ?? value.trim().toLowerCase();
+  }
 
   return value.normalize("NFKC").replace(/\s+/g, " ").trim().toLowerCase();
 }
@@ -130,7 +132,7 @@ export function canonicalValue(
 /** True when every document that states a value states the same one. */
 export function isCrossDocConsistent(
   evidence: Evidence[],
-  field: Pick<FieldDefinition, "type">,
+  field: Pick<FieldDefinition, "type" | "format">,
 ): boolean {
   const stated = evidence.filter((e) => e.candidateValue !== null);
   const values = new Set(

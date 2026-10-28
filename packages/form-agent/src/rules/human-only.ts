@@ -21,8 +21,15 @@ const PATTERNS: RegExp[] = [
  */
 const LABEL_HEAD = 100;
 
+/**
+ * Also takes AcroForm field names: `Applicant_Signature1` and
+ * `ApplicantSignature` are read as "Applicant Signature".
+ */
 export function isHumanOnlyByRule(label: string): boolean {
-  const head = label.slice(0, LABEL_HEAD);
+  const words = label
+    .replace(/([a-z])([A-Z])/g, "$1 $2")
+    .replace(/[_\d]+/g, " ");
+  const head = words.slice(0, LABEL_HEAD);
 
   return PATTERNS.some((p) => p.test(head));
 }

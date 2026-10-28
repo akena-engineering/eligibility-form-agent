@@ -211,6 +211,17 @@ describe("values", () => {
     ).toBe(false);
   });
 
+  it("reads numeric dates day first on a day-first form", () => {
+    const evidence = [
+      { docId: "d1", page: 1, quote: "q", candidateValue: "03/04/2026" },
+      { docId: "d2", page: 1, quote: "q", candidateValue: "3 April 2026" },
+    ];
+
+    expect(
+      isCrossDocConsistent(evidence, { type: "date", format: "DD/MM/YYYY" }),
+    ).toBe(true);
+  });
+
   it("validates options and types", () => {
     expect(
       isOptionValid("Yes", { type: "radio", options: ["Yes", "No"] }),
@@ -230,6 +241,8 @@ describe("staff-only rule", () => {
     "Applicant signature",
     "3. Is unlikely to return to a previous industry or occupation",
     "Telephone verification by last employer (with name, position, and date of contact)",
+    "Applicant_Signature1",
+    "DateOfDetermination",
   ])("marks %s", (label) => {
     expect(isHumanOnlyByRule(label)).toBe(true);
   });

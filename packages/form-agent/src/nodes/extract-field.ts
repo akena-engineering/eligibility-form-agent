@@ -103,12 +103,14 @@ function toDraft(
   }
 
   if (answer.status !== "found") {
+    // Only a checkbox can be "not applicable" (left unticked, no review). Any
+    // other field without a value is missing, so the reviewer sees it.
     const unticked =
       answer.status === "not_applicable" && field.type === "checkbox";
 
     return blankProposal(
       field.id,
-      answer.status,
+      unticked ? "not_applicable" : "missing",
       answer.reasoning,
       attempt,
       unticked ? false : null,
